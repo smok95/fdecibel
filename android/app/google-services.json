@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "851370581618",
+    "firebase_url": "https://sound-meter-686f3.firebaseio.com",
+    "project_id": "sound-meter-686f3",
+    "storage_bucket": "sound-meter-686f3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:851370581618:android:404b5d89fe8f34bc46eceb",
+        "android_client_info": {
+          "package_name": "com.smok95.fdecibel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "851370581618-289lpn907749gu29kvs338p6ike7p32i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWVMW1wU8GplM1YB_U8VW3nKgr9B_QC8k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "851370581618-289lpn907749gu29kvs338p6ike7p32i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
