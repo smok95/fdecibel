@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:app_settings/app_settings.dart';
+import 'package:fdecibel/shared_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -22,6 +23,7 @@ import 'ticker_clock.dart';
 import 'decibel_stats.dart';
 import 'my_themedata.dart';
 import 'decibel_view/decibel_view.dart';
+import 'settings_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,25 +41,41 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final sharedSettings = SharedSettings();
+
     // Prevent device orientation changes.
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
 
-    return GetMaterialApp(
-        onGenerateTitle: (BuildContext context) =>
-            MyLocal.of(context).text('title'),
-        localizationsDelegates: [
-          const MyLocalDelegate(),
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: [const Locale('en', ''), const Locale('ko', '')],
-        theme: MyThemeData.dark(),
-        home: MultiProvider(
-            providers: [ChangeNotifierProvider(create: (_) => DecibelStats())],
-            child: MyHomePage()));
+    return FutureBuilder<Brightness>(
+        future: sharedSettings.brightness,
+        initialData: Brightness.dark,
+        builder: (BuildContext context, AsyncSnapshot<Brightness> snapshot) {
+          final brightness = snapshot.hasData ? snapshot.data : Brightness.dark;
+          final theme = brightness == Brightness.dark
+              ? MyThemeData.dark()
+              : MyThemeData.light();
+
+          return GetMaterialApp(
+              onGenerateTitle: (BuildContext context) =>
+                  MyLocal.of(context).text('title'),
+              localizationsDelegates: [
+                const MyLocalDelegate(),
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              supportedLocales: [
+                const Locale('en', ''),
+                const Locale('ko', '')
+              ],
+              theme: theme,
+              home: MultiProvider(providers: [
+                ChangeNotifierProvider(create: (_) => DecibelStats()),
+                ChangeNotifierProvider(create: (_) => SharedSettings()),
+              ], child: MyHomePage()));
+        });
   }
 }
 
@@ -84,8 +102,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final backColor = _checkIfDarkModeEnabled() ? Colors.black : null;
-    final lo = MyLocal.of(context);
+    final backColor = Get.isDarkMode ? Colors.black : Colors.white;
 
     return Scaffold(
       backgroundColor: backColor,
@@ -94,17 +111,24 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         child: Center(
           child: Screenshot(
             controller: _screenshotController,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Spacer(),
-                TickerClock(),
-                Spacer(),
-                DecibelView(),
-                MyAdmob.createAdmobBanner(),
-                Spacer(flex: 5),
-              ],
-            ),
+
+            /// Card로 warp한 이유는 screencapture시 light theme에서 배경이 검은색으로 표시되어
+            /// 제대로된 캡쳐가 되지 않아 Card로 감쌈.
+            /// https://github.com/SachinGanesh/screenshot/issues/17
+            child: Card(
+                color: backColor,
+                shadowColor: backColor,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Spacer(),
+                    TickerClock(),
+                    Spacer(),
+                    DecibelView(),
+                    MyAdmob.createAdmobBanner(),
+                    Spacer(flex: 5),
+                  ],
+                )),
           ),
         ),
       ),
@@ -114,22 +138,26 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   Widget _buildFloatingActionButton(BuildContext context) {
     final lo = MyLocal.of(context);
-    final labelBackColor =
-        _checkIfDarkModeEnabled() ? Colors.grey[800] : Colors.white;
+    final labelBackColor = Get.isDarkMode ? Colors.grey[800] : Colors.white;
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
       overlayColor: Colors.black,
       children: [
         SpeedDialChild(
             labelBackgroundColor: labelBackColor,
+            child: Icon(Icons.settings),
+            label: lo.text('settings'),
+            onTap: _onTapSettings),
+        SpeedDialChild(
+            labelBackgroundColor: labelBackColor,
             child: Icon(Icons.autorenew),
             label: lo.text('reset'),
-            onTap: _onPressedReset),
+            onTap: _onTapReset),
         SpeedDialChild(
             labelBackgroundColor: labelBackColor,
             child: Icon(Icons.photo_camera),
             label: lo.text('screenshot'),
-            onTap: _onPressedScreenshot),
+            onTap: _onTapScreenshot),
       ],
     );
   }
@@ -167,11 +195,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
-  bool _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    return theme?.brightness == Brightness.dark;
-  }
-
   void _saveImage(File image) async {
     final result = await ImageGallerySaver.saveImage(image.readAsBytesSync());
     print('capture ok, ${result}');
@@ -198,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     return status;
   }
 
-  void _onPressedScreenshot() async {
+  void _onTapScreenshot() async {
     final lo = MyLocal.of(context);
     final status = await _checkStoragePermission();
     if (!status.isGranted) {
@@ -225,8 +248,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     });
   }
 
-  void _onPressedReset() {
+  void _onTapReset() {
     context.read<DecibelStats>().reset();
+  }
+
+  void _onTapSettings() {
+    Get.to(SettingsPage(onToggleDarkMode: (darkMode) {
+      final theme = darkMode ? MyThemeData.dark() : MyThemeData.light();
+      Get.changeTheme(theme);
+      context
+          .read<SharedSettings>()
+          .changeBrightness(darkMode ? Brightness.dark : Brightness.light);
+    }));
   }
 
   @override

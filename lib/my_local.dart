@@ -23,8 +23,9 @@ class MyLocal {
       'permission denied': 'Permission denied',
       'please allow permission':
           'Necessary permissions are denied. Please allow in Settings.',
-      'settings': 'SETTINGS',
+      'settings': 'Settings',
       'open settings': 'OPEN SETTINGS',
+      'dark mode': 'Dark Mode',
     },
     'ko': {
       'title': '소음 측정기',
@@ -40,6 +41,7 @@ class MyLocal {
       'please allow permission': '권한이 없어 해당 기능을 사용할 수 없습니다. 앱 설정에서 권한을 허용해주세요.',
       'settings': '설정',
       'open settings': '설정 열기',
+      'dark mode': '다크 모드',
     },
   };
 
