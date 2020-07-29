@@ -104,7 +104,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final backColor = Get.isDarkMode ? Colors.black : Colors.white;
+    final backColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.black
+        : Colors.white;
     print('build call');
 
     return Scaffold(
@@ -258,7 +260,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void _onTapSettings() {
     Get.to(SettingsPage(
       onToggleDarkMode: (darkMode) {
-        final darkMode = !Get.isDarkMode;
         final theme = darkMode ? MyThemeData.dark() : MyThemeData.light();
         context
             .read<SharedSettings>()

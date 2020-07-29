@@ -38,7 +38,7 @@ class SettingsPage extends StatelessWidget {
               SettingsTile.switchTile(
                 leading: Icon(Icons.brightness_6),
                 title: lo('dark mode'),
-                switchValue: Get.isDarkMode,
+                switchValue: Theme.of(context).brightness == Brightness.dark,
                 onToggle: onToggleDarkMode,
               ),
               SettingsTile(
