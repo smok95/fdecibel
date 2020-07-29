@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' as Foundation;
 import 'package:admob_flutter/admob_flutter.dart';
 
+import 'my_private_data.dart';
+
 class MyAdmob {
   /// {@template firebase_admob.testAdUnitId}
   /// A platform-specific AdMob test ad unit ID. This ad unit
@@ -15,11 +17,9 @@ class MyAdmob {
       ? 'ca-app-pub-3940256099942544/6300978111'
       : 'ca-app-pub-3940256099942544/2934735716';
 
-  static String get appId => "ca-app-pub-0843163070431190~6462477826";
-  static String get unitId {    
-    return Foundation.kDebugMode
-        ? testAdUnitId
-        : 'ca-app-pub-0843163070431190/5733873607';
+  static String get appId => MyPrivateData.adMobAppId;
+  static String get unitId {
+    return Foundation.kDebugMode ? testAdUnitId : MyPrivateData.AdMobUnitId1;
   }
 
   /// Admob 배너 생성

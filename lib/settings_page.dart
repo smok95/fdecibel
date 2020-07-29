@@ -1,19 +1,24 @@
-import 'package:fdecibel/my_themedata.dart';
-import 'package:fdecibel/shared_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:provider/provider.dart';
 
 import 'my_local.dart';
 
 typedef DarkModeCallback = void Function(bool darkMode);
+typedef SettingChangeCallback = void Function(String name, dynamic value);
 
 class SettingsPage extends StatelessWidget {
   final DarkModeCallback onToggleDarkMode;
+  final SettingChangeCallback onSettingChange;
 
-  SettingsPage({this.onToggleDarkMode});
+  SettingsPage({this.onToggleDarkMode, this.onSettingChange});
+
+  void _fireChange(final String name, dynamic value) {
+    if (onSettingChange != null) {
+      onSettingChange(name, value);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +36,25 @@ class SettingsPage extends StatelessWidget {
             //title: 'Section',
             tiles: [
               SettingsTile.switchTile(
+                leading: Icon(Icons.brightness_6),
                 title: lo('dark mode'),
-                switchValue: Theme.of(context).brightness == Brightness.dark,
+                switchValue: Get.isDarkMode,
                 onToggle: onToggleDarkMode,
               ),
               SettingsTile(
+                  leading: Icon(Icons.rate_review),
+                  title: lo('rate review'),
+                  onTap: () {
+                    _fireChange('rate review', null);
+                  }),
+              SettingsTile(
+                  leading: Icon(Icons.share),
+                  title: lo('share app'),
+                  onTap: () {
+                    _fireChange('share app', null);
+                  }),
+              SettingsTile(
+                leading: Icon(Icons.info_outline),
                 title: 'More Info',
                 onTap: () async {
                   PackageInfo packageInfo = await PackageInfo.fromPlatform();

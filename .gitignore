@@ -32,6 +32,9 @@
 .pub/
 /build/
 
+# Private data
+my_private_data.dart
+
 # Web related
 lib/generated_plugin_registrant.dart
 

@@ -37,6 +37,9 @@ class DecibelGauge extends StatelessWidget {
 
   Widget _buildGauge(BuildContext context, final double decibel) {
     final String text = MyUtil.doubleToString(decibel) + ' dB';
+    final axisLabelColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
 
     return SfRadialGauge(
       enableLoadingAnimation: true,
@@ -50,6 +53,7 @@ class DecibelGauge extends StatelessWidget {
             labelOffset: 0.1,
             tickOffset: 0.1,
             offsetUnit: GaugeSizeUnit.factor,
+            axisLabelStyle: GaugeTextStyle(color: axisLabelColor),
             ranges: [
               GaugeRange(
                 startWidth: 0.15,

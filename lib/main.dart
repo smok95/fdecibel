@@ -14,8 +14,10 @@ import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:share/share.dart';
 import 'package:syncfusion_flutter_core/core.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'my_admob.dart';
 import 'my_local.dart';
@@ -24,13 +26,13 @@ import 'decibel_stats.dart';
 import 'my_themedata.dart';
 import 'decibel_view/decibel_view.dart';
 import 'settings_page.dart';
+import 'my_private_data.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Provider.debugCheckInvalidValueType = null;
 
-  SyncfusionLicense.registerLicense(
-      'NT8mJyc2IWhia31ifWN9ZmpoYmF8YGJ8ampqanNiYmlmamlmanMDHmg3Yz0pIGNjPRM0PjI6P30wPD4=');
+  SyncfusionLicense.registerLicense(MyPrivateData.syncFusionLicense);
 
   /// AdMob  초기화
   MyAdmob.initialize();
@@ -103,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final backColor = Get.isDarkMode ? Colors.black : Colors.white;
+    print('build call');
 
     return Scaffold(
       backgroundColor: backColor,
@@ -253,13 +256,33 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void _onTapSettings() {
-    Get.to(SettingsPage(onToggleDarkMode: (darkMode) {
-      final theme = darkMode ? MyThemeData.dark() : MyThemeData.light();
-      Get.changeTheme(theme);
-      context
-          .read<SharedSettings>()
-          .changeBrightness(darkMode ? Brightness.dark : Brightness.light);
-    }));
+    Get.to(SettingsPage(
+      onToggleDarkMode: (darkMode) {
+        final darkMode = !Get.isDarkMode;
+        final theme = darkMode ? MyThemeData.dark() : MyThemeData.light();
+        context
+            .read<SharedSettings>()
+            .changeBrightness(darkMode ? Brightness.dark : Brightness.light);
+
+        Get.changeThemeMode(darkMode ? ThemeMode.dark : ThemeMode.light);
+        Get.changeTheme(theme);
+
+        Future.delayed(Duration(milliseconds: 500), () {
+          //setState(() {});
+          Get.forceAppUpdate();
+        });
+      },
+      onSettingChange: (name, value) async {
+        if (name == 'share app') {
+          Share.share(MyPrivateData.playStoreUrl);
+        } else if (name == 'rate review') {
+          final playstoreUrl = MyPrivateData.playStoreUrl;
+          if (await canLaunch(playstoreUrl)) {
+            await launch(playstoreUrl);
+          }
+        }
+      },
+    ));
   }
 
   @override
