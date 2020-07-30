@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2020-07-30
+### Changed
+- Change position of admob banner
+
 ## [1.2.1] - 2020-07-29
 ### Fixed
 - light theme 적용 후 앱 재시작시 정상적으로 표시되지 않는 현상 수정

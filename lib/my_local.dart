@@ -28,6 +28,7 @@ class MyLocal {
       'dark mode': 'Dark Mode',
       'share app': 'Share App',
       'rate review': 'Rate 5 stars',
+      'more apps': 'More apps',
     },
     'ko': {
       'title': '소음 측정기',
@@ -46,6 +47,7 @@ class MyLocal {
       'dark mode': '다크 모드',
       'share app': '앱 공유하기',
       'rate review': '별점주기',
+      'more apps': '다른 앱 보기',
     },
   };
 

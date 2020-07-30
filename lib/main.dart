@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:fdecibel/shared_settings.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+    _admobBanner = MyAdmob.createAdmobBanner();
     _start();
   }
 
@@ -126,11 +128,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    _admobBanner,
                     Spacer(),
                     TickerClock(),
                     Spacer(),
                     DecibelView(),
-                    MyAdmob.createAdmobBanner(),
                     Spacer(flex: 5),
                   ],
                 )),
@@ -209,6 +211,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
     final title = lo.text('screenshot saved');
     Get.snackbar(title, filePath,
+        snackPosition: SnackPosition.BOTTOM,
         mainButton: FlatButton(
             onPressed: () {
               OpenFile.open(filePath);
@@ -232,6 +235,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (!status.isGranted) {
       Get.snackbar(
           lo.text('permission denied'), lo.text('please allow permission'),
+          snackPosition: SnackPosition.BOTTOM,
           mainButton: FlatButton(
               onPressed: () {
                 AppSettings.openAppSettings();
@@ -249,7 +253,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         .then((value) {
       _saveImage(value);
     }).catchError((error) {
-      Get.snackbar('Error', error.toString());
+      Get.snackbar(
+        'Error',
+        error.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
     });
   }
 
@@ -280,6 +288,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           final playstoreUrl = MyPrivateData.playStoreUrl;
           if (await canLaunch(playstoreUrl)) {
             await launch(playstoreUrl);
+          }
+        } else if (name == 'more apps') {
+          final devPage = MyPrivateData.googlePlayDeveloperPageUrl;
+          if (await canLaunch(devPage)) {
+            await launch(devPage);
           }
         }
       },
@@ -312,4 +325,5 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   bool _isAppRunning = true;
 
   ScreenshotController _screenshotController = ScreenshotController();
+  AdmobBanner _admobBanner;
 }

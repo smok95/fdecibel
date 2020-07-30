@@ -22,11 +22,13 @@ class MyAdmob {
     return Foundation.kDebugMode ? testAdUnitId : MyPrivateData.AdMobUnitId1;
   }
 
+  static AdmobBannerSize get bannerSize => AdmobBannerSize.LARGE_BANNER;
+
   /// Admob 배너 생성
   static AdmobBanner createAdmobBanner() {
     return AdmobBanner(
       adUnitId: unitId,
-      adSize: AdmobBannerSize.LARGE_BANNER,
+      adSize: bannerSize,
     );
   }
 

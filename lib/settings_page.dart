@@ -54,6 +54,12 @@ class SettingsPage extends StatelessWidget {
                     _fireChange('share app', null);
                   }),
               SettingsTile(
+                  leading: Icon(Icons.apps),
+                  title: lo('more apps'),
+                  onTap: () {
+                    _fireChange('more apps', null);
+                  }),
+              SettingsTile(
                 leading: Icon(Icons.info_outline),
                 title: 'More Info',
                 onTap: () async {
