@@ -4,7 +4,6 @@ import 'dart:ui';
 
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:app_settings/app_settings.dart';
-import 'package:fdecibel/shared_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -14,12 +13,13 @@ import 'package:noise_meter/noise_meter.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:screen/screen.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:share/share.dart';
 import 'package:syncfusion_flutter_core/core.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import 'decibel_view/decibel_example.dart';
+import 'shared_settings.dart';
 import 'my_admob.dart';
 import 'my_local.dart';
 import 'ticker_clock.dart';
@@ -96,6 +96,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     super.initState();
     _admobBanner = MyAdmob.createAdmobBanner();
     _start();
+
+    SharedSettings().showExampleNoiseLevel.then((value) {
+      if (_showExampleNoiseLevel != value) {
+        setState(() {
+          _showExampleNoiseLevel = value;
+        });
+      }
+    });
   }
 
   @override
@@ -133,13 +141,26 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     TickerClock(),
                     Spacer(),
                     DecibelView(),
-                    Spacer(flex: 5),
+                    _showExampleNoiseLevel
+                        ? Flexible(child: _buildDecibelLevelInfo(), flex: 5)
+                        : Spacer(flex: 5),
                   ],
                 )),
           ),
         ),
       ),
       floatingActionButton: _buildFloatingActionButton(context),
+    );
+  }
+
+  Widget _buildDecibelLevelInfo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(child: DecibelExample()),
+        SizedBox(width: 90, height: double.infinity)
+      ],
     );
   }
 
@@ -190,6 +211,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void _start() async {
     try {
       _noiseSubscription = _noiseMeter.noiseStream.listen(onData);
+
+      final screenOn = await SharedSettings().keepTheScreenOn;
+      Screen.keepOn(screenOn);
     } catch (exception) {
       print(exception);
     }
@@ -265,8 +289,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     context.read<DecibelStats>().reset();
   }
 
-  void _onTapSettings() {
+  void _onTapSettings() async {
     Get.to(SettingsPage(
+      keepTheScreenOn: await Screen.isKeptOn,
+      showExampleNoiseLevel: _showExampleNoiseLevel,
       onToggleDarkMode: (darkMode) {
         final theme = darkMode ? MyThemeData.dark() : MyThemeData.light();
         context
@@ -282,18 +308,25 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         });
       },
       onSettingChange: (name, value) async {
-        if (name == 'share app') {
-          Share.share(MyPrivateData.playStoreUrl);
-        } else if (name == 'rate review') {
-          final playstoreUrl = MyPrivateData.playStoreUrl;
-          if (await canLaunch(playstoreUrl)) {
-            await launch(playstoreUrl);
+        if (name == 'keep the screen on') {
+          final screenOn = value as bool;
+
+          final current = await Screen.isKeptOn;
+
+          if (screenOn != current) {
+            Screen.keepOn(screenOn);
+
+            context.read<SharedSettings>().changeKeepTheScreenOn(screenOn);
           }
-        } else if (name == 'more apps') {
-          final devPage = MyPrivateData.googlePlayDeveloperPageUrl;
-          if (await canLaunch(devPage)) {
-            await launch(devPage);
-          }
+        } else if (name == 'show example noise level') {
+          final newValue = value as bool;
+
+          if (newValue == _showExampleNoiseLevel) return;
+
+          context.read<SharedSettings>().changeShowExampleNoiseLevel(newValue);
+          setState(() {
+            _showExampleNoiseLevel = newValue;
+          });
         }
       },
     ));
@@ -326,4 +359,5 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   ScreenshotController _screenshotController = ScreenshotController();
   AdmobBanner _admobBanner;
+  bool _showExampleNoiseLevel = false;
 }

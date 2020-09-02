@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2020-09-02
+### Fixed
+- Bug fixes, including a fix for a concurrent modification exception. (com.google.firebase:firebase-analytics)
+
+### Added
+- Add 'keep the screen on'
+- Add Examples of Noise Levels
+
 ## [1.3.0] - 2020-07-30
 ### Changed
 - Change position of admob banner

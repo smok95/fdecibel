@@ -1,22 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'my_local.dart';
+import 'my_private_data.dart';
 
 typedef DarkModeCallback = void Function(bool darkMode);
 typedef SettingChangeCallback = void Function(String name, dynamic value);
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   final DarkModeCallback onToggleDarkMode;
   final SettingChangeCallback onSettingChange;
+  bool keepTheScreenOn = false;
+  bool showExampleNoiseLevel = true;
 
-  SettingsPage({this.onToggleDarkMode, this.onSettingChange});
+  SettingsPage(
+      {this.onToggleDarkMode,
+      this.onSettingChange,
+      this.keepTheScreenOn,
+      this.showExampleNoiseLevel});
+  @override
+  _SettingsPageState createState() => _SettingsPageState();
+}
 
+class _SettingsPageState extends State<SettingsPage> {
   void _fireChange(final String name, dynamic value) {
-    if (onSettingChange != null) {
-      onSettingChange(name, value);
+    if (widget.onSettingChange != null) {
+      widget.onSettingChange(name, value);
     }
   }
 
@@ -39,29 +51,44 @@ class SettingsPage extends StatelessWidget {
                 leading: Icon(Icons.brightness_6),
                 title: lo('dark mode'),
                 switchValue: Theme.of(context).brightness == Brightness.dark,
-                onToggle: onToggleDarkMode,
+                onToggle: widget.onToggleDarkMode,
               ),
+              SettingsTile.switchTile(
+                  leading: Icon(Icons.settings_brightness),
+                  title: lo('keep the screen on'),
+                  onToggle: (value) {
+                    _fireChange('keep the screen on', value);
+                    setState(() {
+                      widget.keepTheScreenOn = value;
+                    });
+                  },
+                  switchValue: widget.keepTheScreenOn),
+              SettingsTile.switchTile(
+                  leading: Icon(Icons.live_help),
+                  title: lo('show example noise level'),
+                  onToggle: (value) {
+                    _fireChange('show example noise level', value);
+                    setState(() {
+                      widget.showExampleNoiseLevel = value;
+                    });
+                  },
+                  switchValue: widget.showExampleNoiseLevel),
               SettingsTile(
                   leading: Icon(Icons.rate_review),
                   title: lo('rate review'),
-                  onTap: () {
-                    _fireChange('rate review', null);
-                  }),
+                  onTap: () => _launch(MyPrivateData.playStoreUrl)),
               SettingsTile(
                   leading: Icon(Icons.share),
                   title: lo('share app'),
-                  onTap: () {
-                    _fireChange('share app', null);
-                  }),
+                  onTap: () => Share.share(MyPrivateData.playStoreUrl)),
               SettingsTile(
                   leading: Icon(Icons.apps),
                   title: lo('more apps'),
-                  onTap: () {
-                    _fireChange('more apps', null);
-                  }),
+                  onTap: () =>
+                      _launch(MyPrivateData.googlePlayDeveloperPageUrl)),
               SettingsTile(
                 leading: Icon(Icons.info_outline),
-                title: 'More Info',
+                title: lo('app info'),
                 onTap: () async {
                   PackageInfo packageInfo = await PackageInfo.fromPlatform();
                   showAboutDialog(
@@ -75,5 +102,11 @@ class SettingsPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _launch(final String text) async {
+    if (await canLaunch(text)) {
+      await launch(text);
+    }
   }
 }
