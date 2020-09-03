@@ -8,7 +8,13 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="@string/app_name"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
+        <!-- api 29로 설정후에 쓰기권한을 줬는데도 EACCES (Permission Denied)오류발생시 임시로 해결할 수 있는 옵션 
+        android:requestLegacyExternalStorage="true"
+        추후, https://developer.android.com/training/data-storage/files/external-scoped?hl=ko 참고해 수정할것!
+        -->
+        
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

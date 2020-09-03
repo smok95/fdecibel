@@ -98,6 +98,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     _start();
 
     SharedSettings().showExampleNoiseLevel.then((value) {
+      print('showExampleNoiseLevel value=$value');
       if (_showExampleNoiseLevel != value) {
         setState(() {
           _showExampleNoiseLevel = value;

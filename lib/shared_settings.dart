@@ -48,7 +48,7 @@ class SharedSettings with ChangeNotifier {
   void changeShowExampleNoiseLevel(bool value) {
     final key = 'showExampleNoiseLevel';
     SharedPreferences.getInstance().then((prefs) {
-      final current = prefs.getBool(key) ?? false;
+      final current = prefs.getBool(key) ?? true;
       if (current == value) return;
       prefs.setBool(key, value).then((success) {
         print('"$key" save result: $success');

@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2020-09-03
+### Fixed
+- Bug fix, 소음수준 정보 표시 설정값 저장되는 않는 현상 수정
+- Android10(api29) WRITE_EXTERNAL_STORAGE EACCES (Permission Denied)오류 발생하는 현상 수정
+
 ## [1.4.0] - 2020-09-02
 ### Fixed
 - Bug fixes, including a fix for a concurrent modification exception. (com.google.firebase:firebase-analytics)
