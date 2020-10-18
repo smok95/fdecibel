@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_jk/flutter_jk.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:get/get.dart';
 import 'package:noise_meter/noise_meter.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -21,7 +20,6 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'decibel_view/decibel_example.dart';
 import 'shared_settings.dart';
 import 'my_admob.dart';
-import 'my_local.dart';
 import 'ticker_clock.dart';
 import 'decibel_stats.dart';
 import 'my_themedata.dart';
@@ -52,6 +50,11 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
 
+    final messages = GetxMessages();
+    messages.add('en_US', 'title', 'Sound Meter');
+    messages.add('ko_KR', 'title', '소음 측정기');
+    messages.add('po_PL', 'title', 'miernik dźwięku');
+
     return FutureBuilder<Brightness>(
         future: sharedSettings.brightness,
         initialData: Brightness.dark,
@@ -61,18 +64,11 @@ class MyApp extends StatelessWidget {
               ? MyThemeData.dark()
               : MyThemeData.light();
 
+          final currentLocale = ui.window.locale;
           return GetMaterialApp(
-              onGenerateTitle: (BuildContext context) =>
-                  MyLocal.of(context).text('title'),
-              localizationsDelegates: [
-                const MyLocalDelegate(),
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-              ],
-              supportedLocales: [
-                const Locale('en', ''),
-                const Locale('ko', '')
-              ],
+              translations: messages,
+              locale: currentLocale,
+              fallbackLocale: Locale('en', 'US'),
               theme: theme,
               home: MultiProvider(providers: [
                 ChangeNotifierProvider(create: (_) => DecibelStats()),
@@ -166,7 +162,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildFloatingActionButton(BuildContext context) {
-    final lo = MyLocal.of(context);
     final labelBackColor = Get.isDarkMode ? Colors.grey[800] : Colors.white;
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
@@ -175,17 +170,17 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         SpeedDialChild(
             labelBackgroundColor: labelBackColor,
             child: Icon(Icons.settings),
-            label: lo.text('settings'),
+            label: 'settings'.tr,
             onTap: _onTapSettings),
         SpeedDialChild(
             labelBackgroundColor: labelBackColor,
             child: Icon(Icons.autorenew),
-            label: lo.text('reset'),
+            label: 'reset'.tr,
             onTap: _onTapReset),
         SpeedDialChild(
             labelBackgroundColor: labelBackColor,
             child: Icon(Icons.photo_camera),
-            label: lo.text('screenshot'),
+            label: 'screenshot'.tr,
             onTap: _onTapScreenshot),
       ],
     );
@@ -230,18 +225,16 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void _saveImage(File image) async {
     final result = await ImageGallerySaver.saveImage(image.readAsBytesSync());
     print('capture ok, ${result}');
-    final lo = MyLocal.of(context);
     String filePath = Uri.decodeComponent(result);
     filePath = filePath.replaceAll('file://', '');
 
-    final title = lo.text('screenshot saved');
-    Get.snackbar(title, filePath,
+    Get.snackbar('screenshot saved'.tr, filePath,
         snackPosition: SnackPosition.BOTTOM,
         mainButton: FlatButton(
             onPressed: () {
               OpenFile.open(filePath);
             },
-            child: Text(lo.text('open'))));
+            child: Text('open'.tr)));
   }
 
   /// 저장소 접근권한 체크 및 요청
@@ -255,17 +248,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void _onTapScreenshot() async {
-    final lo = MyLocal.of(context);
     final status = await _checkStoragePermission();
     if (!status.isGranted) {
-      Get.snackbar(
-          lo.text('permission denied'), lo.text('please allow permission'),
+      Get.snackbar('permission denied'.tr, 'please allow permission'.tr,
           snackPosition: SnackPosition.BOTTOM,
           mainButton: FlatButton(
               onPressed: () {
                 AppSettings.openAppSettings();
               },
-              child: Text(lo.text('open settings'))));
+              child: Text('open settings'.tr)));
       return;
     }
 
@@ -273,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
     _screenshotController
         .capture(
-            pixelRatio: window.devicePixelRatio,
+            pixelRatio: ui.window.devicePixelRatio,
             delay: Duration(milliseconds: 10))
         .then((value) {
       _saveImage(value);

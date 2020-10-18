@@ -1,6 +1,6 @@
-import 'package:fdecibel/my_local.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 import '../decibel_stats.dart';
 
@@ -19,8 +19,6 @@ class DecibelExample extends StatelessWidget {
   }
 
   String _decibelToExample(BuildContext context, double v) {
-    final lo = MyLocal.of(context).text;
-
     /// sources
     /// https://audiology-web.s3.amazonaws.com/migrated/NoiseChart_Poster-%208.5x11.pdf_5399b289427535.32730330.pdf
     ///
@@ -53,6 +51,6 @@ class DecibelExample extends StatelessWidget {
       level = 120;
     }
 
-    return '$level dB : ${lo('decibel$level example')}';
+    return '$level dB : ${'decibel$level example'.tr}';
   }
 }

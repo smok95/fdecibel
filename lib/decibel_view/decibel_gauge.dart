@@ -59,7 +59,7 @@ class DecibelGauge extends StatelessWidget {
                 startWidth: 0.15,
                 endWidth: 0.15,
                 sizeUnit: GaugeSizeUnit.factor,
-                gradient: SweepGradient(colors: [
+                gradient: SweepGradient(colors: const <Color>[
                   Colors.lightGreen,
                   Colors.lightGreen,
                   Colors.lightGreen,

@@ -3,8 +3,8 @@ import 'package:package_info/package_info.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_jk/flutter_jk.dart';
 
-import 'my_local.dart';
 import 'my_private_data.dart';
 
 typedef DarkModeCallback = void Function(bool darkMode);
@@ -34,13 +34,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final lo = MyLocal.of(context).text;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          lo('settings'),
-        ),
+        title: Text('settings'.tr),
       ),
       body: SettingsList(
         sections: [
@@ -49,13 +45,13 @@ class _SettingsPageState extends State<SettingsPage> {
             tiles: [
               SettingsTile.switchTile(
                 leading: Icon(Icons.brightness_6),
-                title: lo('dark mode'),
+                title: 'dark mode'.tr,
                 switchValue: Theme.of(context).brightness == Brightness.dark,
                 onToggle: widget.onToggleDarkMode,
               ),
               SettingsTile.switchTile(
                   leading: Icon(Icons.settings_brightness),
-                  title: lo('keep the screen on'),
+                  title: 'keep the screen on'.tr,
                   onToggle: (value) {
                     _fireChange('keep the screen on', value);
                     setState(() {
@@ -65,7 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   switchValue: widget.keepTheScreenOn),
               SettingsTile.switchTile(
                   leading: Icon(Icons.live_help),
-                  title: lo('show example noise level'),
+                  title: 'show example noise level'.tr,
                   onToggle: (value) {
                     _fireChange('show example noise level', value);
                     setState(() {
@@ -75,20 +71,20 @@ class _SettingsPageState extends State<SettingsPage> {
                   switchValue: widget.showExampleNoiseLevel),
               SettingsTile(
                   leading: Icon(Icons.rate_review),
-                  title: lo('rate review'),
+                  title: 'rate review'.tr,
                   onTap: () => _launch(MyPrivateData.playStoreUrl)),
               SettingsTile(
                   leading: Icon(Icons.share),
-                  title: lo('share app'),
+                  title: 'share app'.tr,
                   onTap: () => Share.share(MyPrivateData.playStoreUrl)),
               SettingsTile(
                   leading: Icon(Icons.apps),
-                  title: lo('more apps'),
+                  title: 'more apps'.tr,
                   onTap: () =>
                       _launch(MyPrivateData.googlePlayDeveloperPageUrl)),
               SettingsTile(
                 leading: Icon(Icons.info_outline),
-                title: lo('app info'),
+                title: 'app info'.tr,
                 onTap: () async {
                   PackageInfo packageInfo = await PackageInfo.fromPlatform();
                   showAboutDialog(

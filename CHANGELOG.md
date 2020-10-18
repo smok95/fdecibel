@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 1.5.0 - 2020-10-18
+### Added
+- 폴란드어 지원 (구글링으로 번역할 수 있는 부분까지만 했음) ** 다음버전에 res/values-pl -> res/values-po 로 변경해야함.
+- Splash Screen 
+
 ## [1.4.1] - 2020-09-03
 ### Fixed
 - Bug fix, 소음수준 정보 표시 설정값 저장되는 않는 현상 수정

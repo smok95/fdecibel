@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.4.1+7
+version: 1.5.0+8
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -39,8 +39,7 @@ dependencies:
   open_file: ^3.0.1
   flutter_speed_dial: ^1.2.5
   admob_flutter: ^0.3.4
-  provider: ^4.3.1
-  get: ^3.2.2
+  provider: ^4.3.1  
   permission_handler: ^5.0.1+1
   app_settings: ^4.0.1+1
   wakelock: ^0.1.4+2
@@ -50,6 +49,11 @@ dependencies:
   share: ^0.6.4+3
   url_launcher: ^5.5.2
   screen: ^0.0.5
+  flutter_jk:
+    #path: ../flutter_jk
+    git:
+      url: https://github.com/smok95/flutter_jk.git
+      ref: 94f3970016a3a55162de6c3637cefff8b703b7f0
 
 dev_dependencies:
   flutter_test:
