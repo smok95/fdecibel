@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 1.5.1 - 2020-10-19
+### Fixed
+- 잘못된 폴란드어 로캐일 이름 수정
+
 ## 1.5.0 - 2020-10-18
 ### Added
-- 폴란드어 지원 (구글링으로 번역할 수 있는 부분까지만 했음) ** 다음버전에 res/values-pl -> res/values-po 로 변경해야함.
+- 폴란드어 지원 (구글링으로 번역할 수 있는 부분까지만 했음) 
 - Splash Screen 
 
 ## [1.4.1] - 2020-09-03

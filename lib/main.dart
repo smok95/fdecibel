@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
     final messages = GetxMessages();
     messages.add('en_US', 'title', 'Sound Meter');
     messages.add('ko_KR', 'title', '소음 측정기');
-    messages.add('po_PL', 'title', 'miernik dźwięku');
+    messages.add('pl_PL', 'title', 'miernik dźwięku');
 
     return FutureBuilder<Brightness>(
         future: sharedSettings.brightness,
@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   children: <Widget>[
                     _admobBanner,
                     Spacer(),
-                    TickerClock(),
+                    TickerClock(languageCode: Get.locale?.languageCode),
                     Spacer(),
                     DecibelView(),
                     _showExampleNoiseLevel
